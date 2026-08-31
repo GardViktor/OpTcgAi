@@ -38,3 +38,9 @@ build/
 ### Database ###
 *.mv.db
 *.trace.db
+
+# IntelliJ IDEA
+.idea/
+
+# Dados locais do H2 (se for o caso)
+data/
