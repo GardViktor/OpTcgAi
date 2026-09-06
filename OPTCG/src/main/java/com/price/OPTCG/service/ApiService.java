@@ -3,6 +3,7 @@ package com.price.OPTCG.service;
 import com.price.OPTCG.dto.OpTcgDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,12 +18,17 @@ public class ApiService {
     }
 
     public List<OpTcgDTO> getCard(String cardSetId) {
-        OpTcgDTO[] response = webClient.get()
-                .uri("/api/sets/card/{cardSetId}/", cardSetId)
-                .retrieve()
-                .bodyToMono(OpTcgDTO[].class)
-                .block(); // .block() converte de reativo pra síncrono
+        try {
+            OpTcgDTO[] response = webClient.get()
+                    .uri("/api/sets/card/{cardSetId}/", cardSetId)
+                    .retrieve()
+                    .bodyToMono(OpTcgDTO[].class)
+                    .block();
 
-        return response != null ? Arrays.asList(response) : List.of();
+            return response != null ? Arrays.asList(response) : List.of();
+
+        } catch (WebClientResponseException.NotFound e) {
+            return List.of(); // API externa não encontrou -> devolve lista vazia
+        }
     }
 }

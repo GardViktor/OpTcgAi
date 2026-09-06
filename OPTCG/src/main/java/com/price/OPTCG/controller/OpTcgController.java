@@ -1,7 +1,6 @@
 package com.price.OPTCG.controller;
 
 import com.price.OPTCG.dto.OpTcgDTO;
-import com.price.OPTCG.service.ApiService;
 import com.price.OPTCG.service.OpTcgService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +13,8 @@ import java.util.List;
 public class OpTcgController {
 
     private final OpTcgService opTcgService;
-    private final ApiService apiService;
-    public OpTcgController(OpTcgService opTcgService, ApiService apiService) {
+    public OpTcgController(OpTcgService opTcgService) {
         this.opTcgService = opTcgService;
-        this.apiService = apiService;
     }
 
     @PostMapping("/create")
@@ -38,16 +35,10 @@ public class OpTcgController {
         OpTcgDTO cardLocal = opTcgService.listCardId(cardSetId);
         if (cardLocal != null) {
             return ResponseEntity.ok(cardLocal);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Card [" + cardSetId + "] Not Found");
         }
-
-        List<OpTcgDTO> cardsApi = apiService.getCard(cardSetId);
-        if (cardsApi != null && !cardsApi.isEmpty()) {
-            OpTcgDTO cardSalvo = opTcgService.createCard(cardsApi.get(0));
-            return ResponseEntity.ok(cardSalvo);
-        }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Card [" + cardSetId + "] Not Found");
     }
 
     @PutMapping("/update/{cardSetId}")
