@@ -28,7 +28,7 @@ public class ApiService {
             return response != null ? Arrays.asList(response) : List.of();
 
         } catch (WebClientResponseException.NotFound e) {
-            return List.of(); // API externa não encontrou -> devolve lista vazia
+            return List.of();
         }
     }
 }
