@@ -4,6 +4,7 @@ import com.price.OPTCG.service.GeminiService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -18,8 +19,10 @@ public class GeminiController {
     }
 
     @GetMapping("/analise")
-    public Mono<String> gerarAnalise() {
-        return geminiService.gerarAnalise();
+    public Mono<ResponseEntity<String>> gerarAnalise() {
+        return geminiService.gerarAnalise()
+                .map(analise -> ResponseEntity.ok(analise))
+                .defaultIfEmpty(ResponseEntity.noContent().build());
 
     }
 }

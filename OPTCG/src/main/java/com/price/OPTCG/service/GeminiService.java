@@ -1,5 +1,10 @@
 package com.price.OPTCG.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.price.OPTCG.model.OpTcgModel;
+import com.price.OPTCG.repository.OpTcgRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -15,15 +20,21 @@ public class GeminiService {
 
     private final WebClient webClient;
     private final String geminiApiKey;
+    private final OpTcgRepository opTcgRepository;
 
     public GeminiService(WebClient.Builder webClientBuilder,
                          @Value("${gemini.api.url}") String geminiApiUrl,
-                         @Value("${gemini.api.key}") String geminiApiKey) {
+                         @Value("${gemini.api.key}") String geminiApiKey,
+                         OpTcgRepository opTcgRepository) {
         this.webClient = webClientBuilder.baseUrl(geminiApiUrl).build();
         this.geminiApiKey = geminiApiKey;
+        this.opTcgRepository = opTcgRepository;
     }
 
     public Mono<String> gerarAnalise() {
+        List<OpTcgModel> cartas = opTcgRepository.findAll();
+        String cartasJson = converterParaJson(cartas);
+
         String prompt = """
             Você é um analista especializado em One Piece TCG, com profundo conhecimento de sinergias entre cores, arquétipos de deck (Líder, Personagens, Eventos, Estágios) e meta competitivo do jogo.
 
@@ -47,7 +58,7 @@ public class GeminiService {
 
             Lista de cartas:
             %s
-            """;
+            """.formatted(cartasJson);
 
         Map<String, Object> requestBody = Map.of(
                 "contents", List.of(
@@ -58,7 +69,7 @@ public class GeminiService {
         );
 
         return webClient.post()
-                .uri("/v1beta/models/gemini-3.7-flash:generateContent")
+                .uri("/v1beta/models/gemini-3.5-flash:generateContent")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .header("x-goog-api-key", geminiApiKey)
                 .bodyValue(requestBody)
@@ -76,5 +87,15 @@ public class GeminiService {
 
                     return "Nenhuma Analise foi gerada";
                 });
+    }
+
+    private String converterParaJson(List<OpTcgModel> cartas) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            return objectMapper.writeValueAsString(cartas);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Erro ao converter cartas para JSON", e);
+        }
     }
 }
