@@ -1,0 +1,34 @@
+package com.price.OPTCG.service;
+
+import com.price.OPTCG.dto.OpTcgDTO;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+
+import java.util.Arrays;
+import java.util.List;
+
+@Service
+public class ApiService {
+
+    private final WebClient webClient;
+
+    public ApiService(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.baseUrl("https://www.optcgapi.com").build();
+    }
+
+    public List<OpTcgDTO> getCard(String cardSetId) {
+        try {
+            OpTcgDTO[] response = webClient.get()
+                    .uri("/api/sets/card/{cardSetId}/", cardSetId)
+                    .retrieve()
+                    .bodyToMono(OpTcgDTO[].class)
+                    .block();
+
+            return response != null ? Arrays.asList(response) : List.of();
+
+        } catch (WebClientResponseException.NotFound e) {
+            return List.of();
+        }
+    }
+}

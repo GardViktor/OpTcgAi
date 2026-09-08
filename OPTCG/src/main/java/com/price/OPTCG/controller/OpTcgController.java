@@ -32,11 +32,13 @@ public class OpTcgController {
 
     @GetMapping("/list/{cardSetId}")
     public ResponseEntity<?> listCardId(@PathVariable String cardSetId) {
-        OpTcgDTO OpTcgReadId = opTcgService.listCardId(cardSetId);
-        if (OpTcgReadId != null) {
-            return ResponseEntity.ok(OpTcgReadId);
-        } else return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Card [" + cardSetId + "] Not Found");
+        OpTcgDTO cardLocal = opTcgService.listCardId(cardSetId);
+        if (cardLocal != null) {
+            return ResponseEntity.ok(cardLocal);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Card [" + cardSetId + "] Not Found");
+        }
     }
 
     @PutMapping("/update/{cardSetId}")

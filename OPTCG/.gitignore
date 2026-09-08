@@ -42,5 +42,5 @@ build/
 # IntelliJ IDEA
 .idea/
 
-# Dados locais do H2 (se for o caso)
+# Dados locais do H2
 data/

@@ -1,0 +1,6 @@
+2026-09-02 12:36:28.594463-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "CARD_TEXT CHARACTER VARYING(255)": "U&'[Main] Up to 1 of your Leader or Character cards gains +3000 power during thi... (264)"; SQL statement:
+insert into tb_op_cards (attribute,card_color,card_cost,card_image,card_image_id,card_name,card_power,card_set_id,card_text,card_type,counter_amount,date_scraped,inventory_price,life,market_price,rarity,set_id,set_name,sub_types,id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,default) [22001-240]
+2026-09-02 12:43:20.021265-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "CARD_TEXT CHARACTER VARYING(255)": "U&'[Main] Up to 1 of your Leader or Character cards gains +3000 power during thi... (264)"; SQL statement:
+insert into tb_op_cards (attribute,card_color,card_cost,card_image,card_image_id,card_name,card_power,card_set_id,card_text,card_type,counter_amount,date_scraped,inventory_price,life,market_price,rarity,set_id,set_name,sub_types,id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,default) [22001-240]

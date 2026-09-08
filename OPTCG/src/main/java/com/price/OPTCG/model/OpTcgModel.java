@@ -22,10 +22,10 @@ public class OpTcgModel {
     private BigDecimal marketPrice;
     private String cardName;
     private String setName;
+    @Column(length = 1000)
     private String cardText;
     private String setId;
     private String rarity;
-    @Column(nullable = true)
     private String cardSetId;
     private String cardColor;
     private String cardType;
