@@ -1,5 +1,6 @@
 package com.price.OPTCG.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,10 +14,13 @@ import java.util.Map;
 public class GeminiService {
 
     private final WebClient webClient;
-    private String geminiApiUrl = System.getenv("GEMINI_API_KEY");
+    private final String geminiApiKey;
 
-    public GeminiService(WebClient webClient) {
-        this.webClient = webClient;
+    public GeminiService(WebClient.Builder webClientBuilder,
+                         @Value("${gemini.api.url}") String geminiApiUrl,
+                         @Value("${gemini.api.key}") String geminiApiKey) {
+        this.webClient = webClientBuilder.baseUrl(geminiApiUrl).build();
+        this.geminiApiKey = geminiApiKey;
     }
 
     public Mono<String> gerarAnalise() {
@@ -56,7 +60,7 @@ public class GeminiService {
         return webClient.post()
                 .uri("/v1beta/models/gemini-3.7-flash:generateContent")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .header("x-goog-api-key", geminiApiUrl)
+                .header("x-goog-api-key", geminiApiKey)
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(Map.class)
@@ -74,14 +78,3 @@ public class GeminiService {
                 });
     }
 }
-
-
-
-
-
-
-
-
-
-
-
